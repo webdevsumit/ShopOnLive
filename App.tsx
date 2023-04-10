@@ -30,7 +30,7 @@ function App(): JSX.Element {
 			{isLogedIn?
 				<TabStack />
 				:
-				<AuthScreen/>	
+				<AuthScreen setIsLogedIn={setIsLogedIn}/>	
 			}
 
       </SafeAreaView>
