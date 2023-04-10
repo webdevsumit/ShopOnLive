@@ -10,8 +10,6 @@ import React, { useState } from 'react';
 import {SafeAreaView, StatusBar, Text} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AuthScreen from './pages/AuthScreen';
 import TabStack from './navigation/TabStack';
 
