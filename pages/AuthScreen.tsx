@@ -18,7 +18,8 @@ import NormalAuth from '../components/NormalAuth';
 import NormalGreenBtn from '../components/NormalGreenBtn';
 import LinkBtn from '../components/LinkBtn';
 import OtpVerification from '../components/OtpVerification';
-import {sendSigninOtpOnWhatsappAPI, signinAPI} from '../actions/apis';
+import {checkAuthenticationAPI, sendSigninOtpOnWhatsappAPI, signinAPI} from '../actions/apis';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
   setIsLogedIn: (params: any) => any;
@@ -36,6 +37,27 @@ const AuthScreen = ({setIsLogedIn}: Props) => {
     );
     return () => subscription?.remove();
   });
+
+  const checkAuthentication = async () => {
+    console.log("checking...")
+    let auth_token = null;
+    try {
+      auth_token = await AsyncStorage.getItem('@token')
+    } catch (e) {console.log(e)};
+    console.log("auth: ", auth_token);
+    if(!!auth_token){
+      await checkAuthenticationAPI(auth_token).then(res=>{
+        console.log(res.data);
+        if(res.data.status === 'success'){
+          setIsLogedIn(true);
+        }
+      }).catch(err=>showToaster(err.message));
+    }
+  }
+
+  useEffect(()=>{
+    checkAuthentication();
+  },[]);
 
   const [isCreatingSellerAcc, setIsCreatingSellerAcc] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -80,10 +102,13 @@ const AuthScreen = ({setIsLogedIn}: Props) => {
     payloads['otp'] = otp;
     setIsLoading(true);
     await signinAPI(payloads)
-      .then(res => {
+      .then(async res => {
         if (res.data.status === 'success') {
           showToaster('You are ready to go!');
-          setIsLogedIn(true);
+          try{
+            await AsyncStorage.setItem('@token',res.data.token);
+            setIsLogedIn(true);
+          }catch(e){showToaster(e);}
         } else showToaster(res.data.message);
       })
       .catch(err => showToaster(err.message));

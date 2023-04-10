@@ -40,3 +40,20 @@ export async function signinAPI(payloads) {
             .catch(err => onReject(err));
     });
 }
+
+export async function checkAuthenticationAPI(token) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.get(
+            `${baseUrl}checkAuthentication/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
