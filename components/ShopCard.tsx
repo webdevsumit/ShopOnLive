@@ -16,8 +16,8 @@ const ShopCard = ({shop, onPress}: Props) => {
                         <MaterialCommunityIcons name="star" color="#DB944B" size={20} />
                         <Text style={[styles.text, styles.textTop]}>{shop.rating}</Text>
                     </View>
-                <Text style={[styles.text, styles.textHead]}>{shop.shopName}</Text>
-                <Text style={[styles.text, styles.textDesc]}>{shop.description.length > 170 ? `${shop.description.substring(0, 170)}..... more>>>` : shop.description}</Text>
+                <Text style={[styles.text, styles.textHead]}>{shop.store_name}</Text>
+                <Text style={[styles.text, styles.textDesc]}>{shop.store_description.length > 170 ? `${shop.store_description.substring(0, 170)}..... more>>>` : shop.store_description}</Text>
                 </View>
             </TouchableOpacity>
         )
