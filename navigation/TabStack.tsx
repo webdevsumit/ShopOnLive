@@ -10,6 +10,7 @@ import AppTitle from '../components/AppTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MeetingScreen from '../pages/MeetingScreen';
 import AccountScreen from '../pages/AccountScreen';
+import HomeStack from './HomeStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,8 +18,8 @@ const TabStack = () => {
   const [zipcode, setZipcode] = React.useState("NO-ZIPCODE");
   const setZipcodeInZipcode = async () => {
     try {
-      let tempZipcode = AsyncStorage.getItem('@zipcode');
-      if(!tempZipcode) setZipcode(tempZipcode);
+      let tempZipcode = await AsyncStorage.getItem('@zipcode');
+      if(!!tempZipcode) setZipcode(tempZipcode);
     } catch (e) {console.log(e)};
   }
   React.useEffect(()=>{
@@ -55,7 +56,7 @@ const TabStack = () => {
         >
           <Tab.Screen
             name="Shops"
-            component={HomeScreen}
+            component={HomeStack}
             options={{title: 'Shops'}}
           />
           <Tab.Screen

@@ -26,7 +26,13 @@ interface Props {
 }
 
 const AuthScreen = ({setIsLogedIn}: Props) => {
+
+  const showToaster = (message: any) => {
+    ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);
+  }
+  
   const [dimensions, setDimensions] = useState(Dimensions.get('screen'));
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
@@ -44,11 +50,16 @@ const AuthScreen = ({setIsLogedIn}: Props) => {
       auth_token = await AsyncStorage.getItem('@token')
     } catch (e) {console.log(e)};
     if(!!auth_token){
-      await checkAuthenticationAPI(auth_token).then(res=>{
+      setIsLoading(true);
+      await checkAuthenticationAPI(auth_token).then(async res=>{
         if(res.data.status === 'success'){
+          try {
+            await AsyncStorage.setItem('@zipcode', res.data.zipcode);
+          } catch (e) {console.log(e)};
           setIsLogedIn(true);
         }
       }).catch(err=>showToaster(err.message));
+      setIsLoading(false);
     }
   }
 
@@ -67,11 +78,6 @@ const AuthScreen = ({setIsLogedIn}: Props) => {
     otp: '',
   });
   const [otp, setOtp] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const showToaster = (message: any) => {
-    ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);
-  }
 
   const SendOtp = async () => {
     if (!authData.phone || !authData.zipcode) {
