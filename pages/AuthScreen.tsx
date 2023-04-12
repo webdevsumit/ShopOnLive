@@ -39,15 +39,12 @@ const AuthScreen = ({setIsLogedIn}: Props) => {
   });
 
   const checkAuthentication = async () => {
-    console.log("checking...")
     let auth_token = null;
     try {
       auth_token = await AsyncStorage.getItem('@token')
     } catch (e) {console.log(e)};
-    console.log("auth: ", auth_token);
     if(!!auth_token){
       await checkAuthenticationAPI(auth_token).then(res=>{
-        console.log(res.data);
         if(res.data.status === 'success'){
           setIsLogedIn(true);
         }
@@ -107,6 +104,10 @@ const AuthScreen = ({setIsLogedIn}: Props) => {
           showToaster('You are ready to go!');
           try{
             await AsyncStorage.setItem('@token',res.data.token);
+            setIsLogedIn(true);
+          }catch(e){showToaster(e);}
+          try{
+            await AsyncStorage.setItem('@zipcode', authData.zipcode);
             setIsLogedIn(true);
           }catch(e){showToaster(e);}
         } else showToaster(res.data.message);
