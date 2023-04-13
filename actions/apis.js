@@ -79,3 +79,46 @@ export async function getNearByShopsAPI(page) {
             .catch(err => onReject(err));
     });
 }
+
+export async function getShopDetailsByIdAPI(id) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.get(
+            `${baseUrl}getShopDetailsById/${id}/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function scheduleNewMeetingAPI(payload) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.post(
+            `${baseUrl}meets/scheduleNewMeeting/`,
+            payload,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}

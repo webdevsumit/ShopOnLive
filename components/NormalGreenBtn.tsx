@@ -5,12 +5,13 @@ interface Props {
     textFontSize: any;
     text: any;
     onPress: (params: any) => any;
+    bgColor: any;
 }
 
-const NormalGreenBtn = ({ textFontSize=14, text, onPress }: Props) => {
+const NormalGreenBtn = ({ textFontSize=14, text, onPress, bgColor="#006604" }: Props) => {
   return (
     <TouchableOpacity onPress={onPress}>
-        <View style={styles.main}>
+        <View style={{...styles.main, backgroundColor: bgColor}}>
             <Text style={{...styles.text, fontSize: textFontSize}} >{text}</Text>
         </View>
     </TouchableOpacity>
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
     main: {
         paddingHorizontal: 15,
         paddingVertical: 10,
-        backgroundColor: '#006604',
+        // backgroundColor: '#006604',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center'
