@@ -5,6 +5,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import NormalGreenBtn from '../components/NormalGreenBtn';
 import { getAccountDetailsAPI } from '../actions/apis';
 import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNRestart from 'react-native-restart'; 
 
 const AccountScreen = ({ navigation }) => {
   const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
@@ -24,6 +26,15 @@ const AccountScreen = ({ navigation }) => {
   useEffect(()=>{
     fetchDetails();
   },[]);
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.clear()
+    } catch(e) {
+      console.log(e);
+    }
+    RNRestart.restart();
+  }
 
   if (!details) return <Text style={styles.loading}>loading...</Text>
   return (
@@ -62,6 +73,9 @@ const AccountScreen = ({ navigation }) => {
             If the gap between last paid date and today is more than 30 days then your shop will temporarily be deactivated.
           </Text>
         </View>
+        <View style={styles.btnView}>
+            <NormalGreenBtn text="LOGOUT" onPress={logout} bgColor="red" />
+          </View>
       </View>
     </ScrollView>
   );
