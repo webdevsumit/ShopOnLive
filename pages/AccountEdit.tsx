@@ -20,8 +20,10 @@ const AccountEdit = ({ navigation }) => {
     await getAccountDetailsAPI().then(res=>{
       if(res.data.status === "success"){
         setDetails(res.data.data);
-        setShopName(res.data.data.store_name);
-        setShopDescription(res.data.data.store_description);
+        if(res.data.data.is_store_owner){
+            setShopName(res.data.data.store_name);
+            setShopDescription(res.data.data.store_description);
+        }
       }else showToaster(res.data.message);
     }).catch(err=>showToaster(err.message));
     setIsRefereshing(false);
@@ -37,7 +39,7 @@ const AccountEdit = ({ navigation }) => {
     await updateAccountDetailsAPI({shopName, shopDescription}).then(res=>{
         if(res.data.status === "success"){
             showToaster("Saved");
-            navigation.goBack();
+            navigation.push("AccountMain");
         }else showToaster(res.data.message);
     }).catch(err=>showToaster(err.message));
     setIsSaving(false);
@@ -57,7 +59,7 @@ const AccountEdit = ({ navigation }) => {
 
           <TextInput
               style={styles.input}
-              onChangeText={txt=>shopName(txt)}
+              onChangeText={txt=>setShopName(txt)}
               value={shopName}
               placeholder="Enter Shop Name."
               keyboardType="default"

@@ -1,4 +1,4 @@
-import {RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View} from 'react-native';
+import {Linking, Platform, RefreshControl, ScrollView, StyleSheet, Text, ToastAndroid, View} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import WhiteWrapper from '../components/WhiteWrapper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,12 +12,14 @@ const AccountScreen = ({ navigation }) => {
   const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
   const [details, setDetails] = useState(null);
   const [isRefereshing, setIsRefereshing] = useState(false);
+  const [customerCareContact, setCustomerCareContact] = useState('7999004229');
 
   const fetchDetails = async () => {
     setIsRefereshing(true);
     await getAccountDetailsAPI().then(res=>{
       if(res.data.status === "success"){
         setDetails(res.data.data);
+        setCustomerCareContact(res.data.customerCareContact);
       }else showToaster(res.data.message);
     }).catch(err=>showToaster(err.message));
     setIsRefereshing(false);
@@ -26,6 +28,16 @@ const AccountScreen = ({ navigation }) => {
   useEffect(()=>{
     fetchDetails();
   },[]);
+
+  const makeCall = () => {
+    let phoneNumber = '';
+    if (Platform.OS === 'android') {
+        phoneNumber = `tel:${customerCareContact}`;
+    } else {
+        phoneNumber = `telprompt:${customerCareContact}`;
+    }
+    Linking.openURL(phoneNumber);
+};
 
   const logout = async () => {
     try {
@@ -49,33 +61,64 @@ const AccountScreen = ({ navigation }) => {
             <MaterialCommunityIcons name="whatsapp" color="green" size={18} />
             <Text style={[styles.text, styles.textTop]}>{details.country_code} {details.phone}</Text>
           </View>
-          <Text style={[styles.text, styles.shopName]}>{details.store_name}</Text>
-          <Text style={[styles.text, styles.description]}>{details.store_description}</Text>
-          <View style={styles.btnView}>
-            <NormalGreenBtn text="EDIT" onPress={()=>navigation.navigate('AccountEdit')} />
-          </View>
+
+          {details.is_store_owner ? <>
+            <Text style={[styles.text, styles.shopName]}>{details.store_name}</Text>
+            <Text style={[styles.text, styles.description]}>{details.store_description}</Text>
+            <View style={styles.btnView}>
+              <NormalGreenBtn text="EDIT" onPress={()=>navigation.navigate('AccountEdit')} />
+            </View>
+          </>:
+          <>
+            <Text style={styles.info}>You cannot change the PHONE number.</Text>
+            <Text style={styles.info}>To change the ZIPCODE click on the zipcode in the top bar.</Text>
+          </>
+          }
+
         </View>
-        <Text style={[styles.text, styles.head]}>Billing</Text>
-        <View style={styles.mainInner}>
-          <Text style={[styles.text, styles.shopName]}>Video Call Minutes: {details.unpaidMinutes}</Text>
-          <Text style={[styles.text, styles.shopName]}>Amount To Pay: Rs. {details.unpaidAmount}</Text>
-          <Text style={[styles.text, styles.description]}>Last paid on: {moment(details.lastPaidOn).format('DD/MM/YYYY')}</Text>
-          <View style={styles.btnView}>
-            <NormalGreenBtn text="PAY NOW" onPress={()=>{
-              if(details.unpaidAmount>5){
-                navigation.navigate('BalancePayment');
-              }else showToaster("Unpaid amount should be more than 5.")
-            }} />
+        {details.is_store_owner?<>
+          <Text style={[styles.text, styles.head]}>Billing</Text>
+          <View style={styles.mainInner}>
+            <Text style={[styles.text, styles.shopName]}>Video Call Minutes: {details.unpaidMinutes}</Text>
+            <Text style={[styles.text, styles.shopName]}>Amount To Pay: Rs. {details.unpaidAmount}</Text>
+            <Text style={[styles.text, styles.description]}>Last paid on: {moment(details.lastPaidOn).format('DD/MM/YYYY')}</Text>
+            <View style={styles.btnView}>
+              <NormalGreenBtn text="PAY NOW" onPress={()=>{
+                if(details.unpaidAmount>5){
+                  navigation.navigate('BalancePayment');
+                }else showToaster("Unpaid amount should be more than 5.")
+              }} />
+            </View>
           </View>
-        </View>
+          <View style={styles.mainInner}>
+            <Text style={{...styles.text, color: 'red'}}>
+              If the gap between last paid date and today is more than 30 days then your shop will temporarily be deactivated.
+            </Text>
+          </View>
+        </>:
         <View style={styles.mainInner}>
-          <Text style={{...styles.text, color: 'red'}}>
-            If the gap between last paid date and today is more than 30 days then your shop will temporarily be deactivated.
+          <Text style={{...styles.text, color: 'green'}}>
+            Opening a shop or store in the market is very hard and take lots of money and time but opening an online shop is very easy just click on the below button.
           </Text>
-        </View>
-        <View style={styles.btnView}>
-            <NormalGreenBtn text="LOGOUT" onPress={logout} bgColor="red" />
+          <Text style={{...styles.text, color: 'green', marginVertical: 5}}>
+            You don't need to worry about shipping, soon we will start delievering your products.
+          </Text>
+          <Text style={{...styles.text, color: 'green'}}>
+            Don't think twice. You can deactivate your shop whenever you want.
+          </Text>
+          <View style={styles.btnView}>
+            <NormalGreenBtn text="BECOME A SELLER" onPress={()=>navigation.navigate('AccountEdit')} />
           </View>
+        </View>
+        }
+        <View style={{...styles.inline, width: '90%', justifyContent: 'space-between'}}>
+            <View style={{...styles.btnView, flex: 1, marginHorizontal: 10}}>
+              <NormalGreenBtn text="CALL US" onPress={makeCall} bgColor="blue" />
+            </View>
+            <View style={{...styles.btnView, flex: 1, marginHorizontal: 10}}>
+              <NormalGreenBtn text="LOGOUT" onPress={logout} bgColor="red" />
+            </View>
+        </View>
       </View>
     </ScrollView>
   );
@@ -129,5 +172,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
     color: 'black'
+  },
+  info: {
+    color: 'gray',
+    fontSize: 12
   }
 });
