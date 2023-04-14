@@ -7,9 +7,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AppTitle from '../components/AppTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MeetingScreen from '../pages/MeetingScreen';
-import AccountScreen from '../pages/AccountScreen';
+
 import HomeStack from './HomeStack';
 import SearchStack from './SearchStack';
+import AccountStack from './AccountStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -70,7 +71,7 @@ const TabStack = () => {
           />
           <Tab.Screen
             name="Account"
-            component={AccountScreen}
+            component={AccountStack}
             options={{title: 'Account'}}
           />
         </Tab.Navigator>
