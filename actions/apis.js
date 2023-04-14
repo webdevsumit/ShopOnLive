@@ -122,3 +122,25 @@ export async function scheduleNewMeetingAPI(payload) {
             .catch(err => onReject(err));
     });
 }
+
+export async function getNearByShopsBySearchAPI(page, searchedText) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.post(
+            `${baseUrl}getNearByShopsBySearch/?page=${page}&recordsPerPage=10&radius=50`,
+            {"searchedText": searchedText},
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}

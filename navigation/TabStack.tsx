@@ -2,15 +2,14 @@ import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../pages/HomeScreen';
 import { StyleSheet, View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import SearchScreen from '../pages/SearchScreen';
 import AppTitle from '../components/AppTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MeetingScreen from '../pages/MeetingScreen';
 import AccountScreen from '../pages/AccountScreen';
 import HomeStack from './HomeStack';
+import SearchStack from './SearchStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -61,7 +60,7 @@ const TabStack = () => {
           />
           <Tab.Screen
             name="Search"
-            component={SearchScreen}
+            component={SearchStack}
             options={{title: 'Search'}}
           />
           <Tab.Screen

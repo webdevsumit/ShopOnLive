@@ -12,7 +12,7 @@ function HomeStack() {
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="ShopDetails" component={ShopDetails} shopId={({ params }) => params.id} />
+      <Stack.Screen name="ShopDetails" component={ShopDetails} />
     </Stack.Navigator>
   );
 }
