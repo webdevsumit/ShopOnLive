@@ -275,6 +275,8 @@ export async function cancelMeetingByIdAPI(id) {
             .catch(err => onReject(err));
     });
 }
+
+
 export async function giveReviewAndRatingToMeetingByIdAPI(payload, id) {
     return await new Promise(async (onResolve, onReject) => {
         let auth_token = null;
@@ -284,6 +286,29 @@ export async function giveReviewAndRatingToMeetingByIdAPI(payload, id) {
         await axios.post(
             `${baseUrl}meets/giveReviewAndRatingToMeetingById/${id}/`,
             payload,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+
+export async function changeZipcodeAPI(zipcode) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.post(
+            `${baseUrl}changeZipcode/`,
+            {zipcode},
             {
                 headers: {
                     'Content-Type': "application/json",

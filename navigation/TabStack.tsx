@@ -2,7 +2,7 @@ import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 // import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppTitle from '../components/AppTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,11 +11,19 @@ import HomeStack from './HomeStack';
 import SearchStack from './SearchStack';
 import AccountStack from './AccountStack';
 import MeetsStack from './MeetsStack';
+import NormalGreenBtn from '../components/NormalGreenBtn';
+import { changeZipcodeAPI } from '../actions/apis';
+import RNRestart from 'react-native-restart'; 
 
 const Tab = createBottomTabNavigator();
 
 const TabStack = () => {
+  const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
+
   const [zipcode, setZipcode] = React.useState("NO-ZIPCODE");
+  const [zipBox, setZipBox] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
+
   const setZipcodeInZipcode = async () => {
     try {
       let tempZipcode = await AsyncStorage.getItem('@zipcode');
@@ -24,19 +32,64 @@ const TabStack = () => {
   }
   React.useEffect(()=>{
     setZipcodeInZipcode();
-  },[])
+  },[]);
+
+  const onChangeZIp = async () => {
+    if(isSaving){
+      showToaster("Please Wait.");
+      return;
+    }
+    setIsSaving(true);
+    await changeZipcodeAPI(zipcode).then(async res=>{
+      if(res.data.status === "success"){
+        try {
+          await AsyncStorage.setItem('@zipcode', zipcode);
+          showToaster("Changed Successfully.");
+          RNRestart.restart();
+        } catch (e) {console.log(e)};
+      }else showToaster(res.data.message);
+    }).catch(err=>showToaster(err.message));
+    setIsSaving(false);
+  }
+
   return (
     <View style={styles.superMain} >
+      {zipBox && <View style={styles.zipBox}>
+        <View style={styles.zipBoxInner}>
+        <View style={styles.wrapperView}>
+            <TextInput
+              style={styles.input}
+              onChangeText={txt=>setZipcode(txt)}
+              value={zipcode}
+              placeholder="Enter zipcode/pincode."
+              keyboardType="number-pad"
+              autoComplete='postal-code'
+              cursorColor='#555'
+              inputMode='numeric'
+              maxLength={6}
+              placeholderTextColor='#aaa'
+              textAlignVertical="center"
+              textAlign="center"
+            />
+            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <NormalGreenBtn text={isSaving ? "SAVING..." : "SAVE"} onPress={onChangeZIp} />
+              <NormalGreenBtn text={"CANCEL"} onPress={()=>setZipBox(false)} bgColor="#777" />
+            </View>
+          </View>
+        </View>
+      </View>}
       <NavigationContainer>
         <Tab.Navigator
           screenOptions={({ route }) => ({
             tabBarHideOnKeyboard: true,
             headerTitle: "",
             headerLeft: ()=><View style={styles.headerLeft}><AppTitle /></View>,
-            headerRight: ()=><View style={styles.headerRight}>
-                <MaterialCommunityIcons name="map-marker" color='black' size={24} />
-                <Text style={styles.topBarZipcode}>{zipcode}</Text>
-              </View>,
+            headerRight: ()=><TouchableOpacity onPress={()=>setZipBox(true)}>
+                              <View style={styles.headerRight}>
+                              <MaterialCommunityIcons name="map-marker" color='black' size={24} />
+                              <Text style={styles.topBarZipcode}>{zipcode}</Text>
+                            </View>
+                          </TouchableOpacity>,
             tabBarIcon: ({ focused, color, size }) => {
               let iconName;
               if (route.name === 'Shops') {
@@ -99,5 +152,32 @@ const styles = StyleSheet.create({
   },
   superMain: {
     height: "100%"
-  }
+  },
+  zipBox: {
+    position: "absolute",
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zipBoxInner: {
+    minHeight: 40,
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    height: 40,
+    width: "80%",
+    borderWidth: 1,
+    padding: 10,
+    color: 'black',
+    borderColor: 'black',
+    marginBottom: 20,
+  },
 })
