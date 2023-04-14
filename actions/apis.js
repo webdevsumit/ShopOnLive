@@ -188,3 +188,90 @@ export async function updateAccountDetailsAPI(payload) {
             .catch(err => onReject(err));
     });
 }
+
+
+export async function getUpcomingMeetingsAPI(page) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.get(
+            `${baseUrl}meets/getUpcomingMeetings/?page=${page}&recordsPerPage=10`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+
+export async function rescheduleMeetingByIdAPI(payload, id) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.post(
+            `${baseUrl}meets/rescheduleMeetingById/${id}/`,
+            payload,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function confirmMeetingByIdAPI(id) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.get(
+            `${baseUrl}meets/confirmMeetingById/${id}/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function cancelMeetingByIdAPI(id) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.get(
+            `${baseUrl}meets/cancelMeetingById/${id}/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}

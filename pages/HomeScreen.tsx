@@ -49,7 +49,7 @@ const HomeScreen = ({navigation: { navigate }}) => {
       data={shops}
       renderItem={({item}:any)=><ShopCard key={item.id} shop={item} onPress={onCardClick} />}
       keyExtractor={item => item.id}
-      ListEmptyComponent={()=><Text style={styles.noResult}>{caughtAll ? "No Results Found" : ""}</Text>}
+      ListEmptyComponent={()=><Text style={styles.noResult}>{caughtAll ? "There is no store in 50 KM raduis." : ""}</Text>}
       initialNumToRender={10}
       onEndReachedThreshold={1}
       onEndReached={(info) => {

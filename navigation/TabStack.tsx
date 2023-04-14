@@ -6,11 +6,11 @@ import { StyleSheet, View, Text } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppTitle from '../components/AppTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MeetingScreen from '../pages/MeetingScreen';
 
 import HomeStack from './HomeStack';
 import SearchStack from './SearchStack';
 import AccountStack from './AccountStack';
+import MeetsStack from './MeetsStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -66,7 +66,7 @@ const TabStack = () => {
           />
           <Tab.Screen
             name="Meetings"
-            component={MeetingScreen}
+            component={MeetsStack}
             options={{title: 'Meets'}}
           />
           <Tab.Screen
