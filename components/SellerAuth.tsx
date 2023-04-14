@@ -67,7 +67,7 @@ const SellerAuth = ({ data, setData }: Props) => {
               numberOfLines={10}
               onChangeText={txt=>setData({...data, description: txt})}
               value={data.description}
-              placeholder="Type here. Try to include all the items that you sell and places where you search to come in the searches."
+              placeholder="Type here. Try to include all the items that you sell and places where you search to come in the searches. (max: 1500 words)."
               keyboardType="default"
               cursorColor='#555'
               maxLength={1500}
