@@ -6,7 +6,7 @@ import { getUpcomingMeetingsAPI } from '../actions/apis';
 const MeetingScreen = ({navigation: { navigate }}) => {
 
   const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
-  const [meetins, setMeetings] = useState<any>([]);
+  const [meetings, setMeetings] = useState<any>([]);
 	const [totalMeetings, setTotalMeetings] = useState(0);
   const [page, setPage] = useState(1);
 	const [caughtAll, setCaughtAll] = useState(false);
@@ -32,6 +32,7 @@ const MeetingScreen = ({navigation: { navigate }}) => {
   }
 
   const resetParamOnReferesh = () => {
+    setMeetings([]);
     setIsRefereshing(true); 
     fetchUpcomingMeetings(1);
   }
@@ -50,7 +51,7 @@ const MeetingScreen = ({navigation: { navigate }}) => {
 
   return (
     <FlatList
-      data={meetins}
+      data={meetings}
       renderItem={({item}:any)=><MeetCard key={item.id} meeting={item} onPressStartMeeting={onMeetJoin} onGivingRatingAndReview={onGivingRatingAndReview} />}
       keyExtractor={item => item.id}
       ListEmptyComponent={()=><Text style={styles.noResult}>{caughtAll ? "You do not have any meeting." : ""}</Text>}
