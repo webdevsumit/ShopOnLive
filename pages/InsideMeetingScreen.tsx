@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, BackHandler } from 'react-native'
 import React from 'react'
 import { useFocusEffect } from '@react-navigation/native';
+import AgoraVideoCall from '../components/AgoraVideoCall';
 
 const InsideMeetingScreen = ({ navigation, route }) => {
 
@@ -17,7 +18,8 @@ const InsideMeetingScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.main}>
-      <Text>InsideMeetingScreen: {route.params.MeetingId}</Text>
+      <AgoraVideoCall />
+      {/* <Text>InsideMeetingScreen: {route.params.MeetingId}</Text> */}
     </View>
   )
 }
