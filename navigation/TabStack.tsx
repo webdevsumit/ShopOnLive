@@ -14,6 +14,7 @@ import MeetsStack from './MeetsStack';
 import NormalGreenBtn from '../components/NormalGreenBtn';
 import { changeZipcodeAPI } from '../actions/apis';
 import RNRestart from 'react-native-restart'; 
+import InsideMeetingScreen from '../pages/InsideMeetingScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -100,6 +101,9 @@ const TabStack = () => {
                 iconName = 'video';
               } else if (route.name === 'Account') {
                 iconName = 'account-circle';
+              } else if (route.name === 'InsideMeeting') {
+                iconName = 'none';
+                return <></>;
               }
               return <MaterialCommunityIcons name={iconName} color={focused ? 'black' : 'gray'} size={size} />;
             },
@@ -120,12 +124,17 @@ const TabStack = () => {
           <Tab.Screen
             name="Meetings"
             component={MeetsStack}
-            options={{title: 'Meets'}}
+            // options={{title: 'Meets', tabBarStyle:{display:'none'}, headerShown: false}}
           />
           <Tab.Screen
             name="Account"
             component={AccountStack}
             options={{title: 'Account'}}
+          />
+          <Tab.Screen
+            name="InsideMeeting"
+            component={InsideMeetingScreen}
+            options={{title: '', tabBarStyle:{display:'none'}, headerShown: false, tabBarButton: ()=><></>}}
           />
         </Tab.Navigator>
       </NavigationContainer>
