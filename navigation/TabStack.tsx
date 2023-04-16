@@ -134,7 +134,7 @@ const TabStack = () => {
           <Tab.Screen
             name="InsideMeeting"
             component={InsideMeetingScreen}
-            options={{title: '', tabBarStyle:{display:'none'}, headerShown: false, tabBarButton: ()=><></>}}
+            options={{title: '', tabBarStyle:{display:'none'}, headerShown: false, tabBarButton: ()=><></>, unmountOnBlur: true}}
           />
         </Tab.Navigator>
       </NavigationContainer>

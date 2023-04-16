@@ -21,8 +21,8 @@ function App(): JSX.Element {
   return (
       <SafeAreaView style={{backgroundColor: Colors.light}}>
 			<StatusBar
-        barStyle={'dark-content'}
-        backgroundColor={isLogedIn? 'white' : '#EDF1F0'}
+        barStyle={'light-content'}
+        backgroundColor={isLogedIn? 'black' : '#EDF1F0'}
       />
 			{isLogedIn?<TabStack />:<AuthScreen setIsLogedIn={setIsLogedIn}/>	}
       </SafeAreaView>

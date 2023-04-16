@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, BackHandler } from 'react-native'
 import React from 'react'
 import { useFocusEffect } from '@react-navigation/native';
-import AgoraVideoCall from '../components/AgoraVideoCall';
+import VideoSDKCall from '../components/VideoSDKCall';
 
 const InsideMeetingScreen = ({ navigation, route }) => {
 
@@ -16,9 +16,13 @@ const InsideMeetingScreen = ({ navigation, route }) => {
     }, [])
   );
 
+  const onMeetIdGeneration = async (newMeetId) => {
+
+  }
+
   return (
     <View style={styles.main}>
-      <AgoraVideoCall />
+      <VideoSDKCall zipcode={123456} onTermination={()=>navigation.navigate("Meetings")} meetId={null} onMeetIdGeneration={onMeetIdGeneration} />
       {/* <Text>InsideMeetingScreen: {route.params.MeetingId}</Text> */}
     </View>
   )
