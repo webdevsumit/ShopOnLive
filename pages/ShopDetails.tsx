@@ -70,21 +70,21 @@ const ShopDetails = ({route}) => {
   }
 
   if (!!shop)
-    return (
+    return (<>
+      {showConfirmBox && 
+        <View style={styles.confirmedBoxOuter}  >
+          <View style={styles.confirmedBox}>
+            <Text style={styles.confirmText}>Your shoping time is scheduled on </Text>
+            <Text style={{...styles.confirmText, marginBottom: 5, color: 'red'}}>{moment(meetDateTime).format("DD/MM/yyyy")} at {moment(meetDateTime).format("hh:mm a")}.</Text>
+            <Text style={{...styles.confirmText, marginBottom: 10}}>You can also check and join from meets tab.</Text>
+            <NormalGreenBtn text="OKAY" onPress={()=>setShowConfirmBox(false)} />
+          </View>
+        </View>}
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={isRefereshing} onRefresh={fetchDetails} />
         }
       >
-        {showConfirmBox && 
-          <View style={styles.confirmedBoxOuter}  >
-            <View style={styles.confirmedBox}>
-              <Text style={styles.confirmText}>Your shoping time is scheduled on </Text>
-              <Text style={{...styles.confirmText, marginBottom: 5, color: 'red'}}>{moment(meetDateTime).format("DD/MM/yyyy")} at {moment(meetDateTime).format("hh:mm a")}.</Text>
-              <Text style={{...styles.confirmText, marginBottom: 10}}>You can also check and join from meets tab.</Text>
-              <NormalGreenBtn text="OKAY" onPress={()=>setShowConfirmBox(false)} />
-            </View>
-          </View>}
 
         <View style={styles.main}>
           <View style={[styles.inline]}>
@@ -123,6 +123,7 @@ const ShopDetails = ({route}) => {
         <Text style={styles.reviewHeadTitle} >Last 20 Reviews & Ratings</Text>
         {shop.filtered_reviews.map(review=><ReviewCard key={review.id} review={review} />)}
       </ScrollView>
+    </>
     );
   return <Text style={styles.loading}>loading...</Text>;
 };

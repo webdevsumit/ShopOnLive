@@ -79,8 +79,8 @@ const AccountScreen = ({ navigation }) => {
         {details.is_store_owner?<>
           <Text style={[styles.text, styles.head]}>Billing</Text>
           <View style={styles.mainInner}>
-            <Text style={[styles.text, styles.shopName]}>Video Call Minutes: {details.unpaidMinutes}</Text>
-            <Text style={[styles.text, styles.shopName]}>Amount To Pay: Rs. {details.unpaidAmount}</Text>
+            <Text style={[styles.text, styles.shopName]}>Video Call Minutes: {(details.unpaidSeconds/60).toFixed(2)}</Text>
+            <Text style={[styles.text, styles.shopName]}>Amount To Pay: Rs. {(details.unpaidAmountInPaisa/60).toFixed(2)}</Text>
             <Text style={[styles.text, styles.description]}>Last paid on: {moment(details.lastPaidOn).format('DD/MM/YYYY')}</Text>
             <View style={styles.btnView}>
               <NormalGreenBtn text="PAY NOW" onPress={()=>{
