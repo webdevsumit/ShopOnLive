@@ -321,3 +321,46 @@ export async function changeZipcodeAPI(zipcode) {
             .catch(err => onReject(err));
     });
 }
+
+export async function getMeetDetailsByIdAPI(id) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.get(
+            `${baseUrl}meets/getMeetDetailsById/${id}/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function setNewMeetIdByIdAPI(id, meetId) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.post(
+            `${baseUrl}meets/setNewMeetIdById/${id}/`,
+            {meetId},
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}

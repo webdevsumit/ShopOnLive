@@ -1,9 +1,16 @@
-import { StyleSheet, Text, View, BackHandler } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, BackHandler, ToastAndroid, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native';
 import VideoSDKCall from '../components/VideoSDKCall';
+import { getMeetDetailsByIdAPI, setNewMeetIdByIdAPI } from '../actions/apis';
 
 const InsideMeetingScreen = ({ navigation, route }) => {
+
+  const showToaster = (message: any) => {
+    ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);
+  }
+
+  const [meetData, setMeetData] = useState(null);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -17,15 +24,36 @@ const InsideMeetingScreen = ({ navigation, route }) => {
   );
 
   const onMeetIdGeneration = async (newMeetId) => {
-
+    await setNewMeetIdByIdAPI(route.params.MeetingId, newMeetId).then(res=>{
+      if(res.data.status === "success"){
+        showToaster("Meeting id saved successfully.");
+      }else showToaster(res.data.message);
+    }).catch(err=>showToaster(err.message));
   }
 
-  return (
-    <View style={styles.main}>
-      <VideoSDKCall zipcode={123456} onTermination={()=>navigation.navigate("Meetings")} meetId={null} onMeetIdGeneration={onMeetIdGeneration} />
-      {/* <Text>InsideMeetingScreen: {route.params.MeetingId}</Text> */}
-    </View>
-  )
+  const fetchMeetDetails = async () => {
+    await getMeetDetailsByIdAPI(route.params.MeetingId).then(res=>{
+      if(res.data.status === "success"){
+        setMeetData(res.data.data);
+      }else showToaster(res.data.message);
+    }).catch(err=>showToaster(err.message));
+  }
+
+  useEffect(()=>{
+    fetchMeetDetails();
+  },[]);
+
+  if(!!!meetData)
+    return (
+      <View style={styles.main}>
+        <ActivityIndicator size="large"/>
+      </View>
+    )
+  else return (
+      <View style={styles.main}>
+        <VideoSDKCall zipcode={meetData.zipcode} onTermination={()=>navigation.navigate("Meetings")} onMeetIdGeneration={onMeetIdGeneration} meetId={meetData.isMeetIdGenerated ? meetData.meetId : null}/>
+      </View>
+    );
 }
 
 export default InsideMeetingScreen

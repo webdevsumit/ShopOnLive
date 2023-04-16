@@ -126,7 +126,8 @@ function MeetingView({ onTermination }) {
   );
 }
 
-export default function VideoSDKCall({ zipcode, onTermination, meetId=null, onMeetIdGeneration }) {
+export default function VideoSDKCall({ zipcode, onTermination, onMeetIdGeneration, meetId }) {
+  console.log(meetId);
   const [meetingId, setMeetingId] = useState(meetId);
 
   const getMeetingId = async (id) => {
