@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, BackHandler, ToastAndroid, ActivityIndicator } 
 import React, { useEffect, useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native';
 import VideoSDKCall from '../components/VideoSDKCall';
-import { getMeetDetailsByIdAPI, setNewMeetIdByIdAPI } from '../actions/apis';
+import { getMeetDetailsByIdAPI, setNewMeetIdByIdAPI, terminateMeetingByIdAPI } from '../actions/apis';
 
 const InsideMeetingScreen = ({ navigation, route }) => {
 
@@ -15,7 +15,7 @@ const InsideMeetingScreen = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        navigation.navigate("Meetings");
+        terminateMeetingByIdAPICall();
         return true;
       };
       const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
@@ -39,6 +39,15 @@ const InsideMeetingScreen = ({ navigation, route }) => {
     }).catch(err=>showToaster(err.message));
   }
 
+  const terminateMeetingByIdAPICall = async () => {
+    await terminateMeetingByIdAPI(route.params.MeetingId).then(res=>{
+      if(res.data.status === "success"){
+        setMeetData(`Meeting Time: ${res.data.duration_in_seconds}s`);
+      }else showToaster(res.data.message);
+    }).catch(err=>showToaster(err.message));
+    navigation.navigate("Meetings");
+  };
+
   useEffect(()=>{
     fetchMeetDetails();
   },[]);
@@ -51,7 +60,7 @@ const InsideMeetingScreen = ({ navigation, route }) => {
     )
   else return (
       <View style={styles.main}>
-        <VideoSDKCall zipcode={meetData.zipcode} onTermination={()=>navigation.navigate("Meetings")} onMeetIdGeneration={onMeetIdGeneration} meetId={meetData.isMeetIdGenerated ? meetData.meetId : null}/>
+        <VideoSDKCall zipcode={meetData.zipcode} onTermination={terminateMeetingByIdAPICall} onMeetIdGeneration={onMeetIdGeneration} meetId={meetData.isMeetIdGenerated ? meetData.meetId : null}/>
       </View>
     );
 }

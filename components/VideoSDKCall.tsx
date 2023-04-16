@@ -88,7 +88,7 @@ function ParticipantList({ participants, showSideVideo, cameraOn }) {
     </View>
   ) : (
     <View style={styles.noVideoView}>
-      <Text style={{ fontSize: 20, color: "black" }}>PLEASE GIVE US FEEDBACK</Text>
+      <Text style={{ fontSize: 20, color: "black" }}>PLEASE GIVE FEEDBACK</Text>
     </View>
   );
 }
@@ -106,6 +106,7 @@ function MeetingView({ onTermination }) {
     },10);
     return(()=>{
       leave();
+      onTermination();
     })
   },[])
 

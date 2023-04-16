@@ -364,3 +364,24 @@ export async function setNewMeetIdByIdAPI(id, meetId) {
             .catch(err => onReject(err));
     });
 }
+
+export async function terminateMeetingByIdAPI(id) {
+    return await new Promise(async (onResolve, onReject) => {
+        let auth_token = null;
+        try {
+            auth_token = await AsyncStorage.getItem('@token')
+        } catch (e) {"token problem: ", console.log(e)};
+        await axios.get(
+            `${baseUrl}meets/terminateMeetingById/${id}/`,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    'Authorization': `Token ${auth_token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
