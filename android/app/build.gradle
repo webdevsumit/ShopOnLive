@@ -111,6 +111,12 @@ android {
         }
     }
     signingConfigs {
+        release {
+            storeFile file('your_key_name.keystore')
+            storePassword '9713751690@Sumit'
+            keyAlias 'your_key_alias'
+            keyPassword '9713751690@Sumit'
+        }
         debug {
             storeFile file('debug.keystore')
             storePassword 'android'
