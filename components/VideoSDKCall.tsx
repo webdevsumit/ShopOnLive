@@ -20,7 +20,7 @@ import { createMeeting, token } from "./../actions/videoSdkApis";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
-function ControlsContainer({ join, leave, toggleWebcam, toggleMic, setShowSideVideo, cameraOn, setCameraOn, onTermination }) {
+function ControlsContainer({ join, leave, toggleWebcam, toggleMic, setShowSideVideo, cameraOn, changeWebcam, setCameraOn, onTermination }) {
   const [showButtons, setShowButtons] = useState(true);
   const [micOn, setMicOn] = useState(true);
 
@@ -31,6 +31,11 @@ function ControlsContainer({ join, leave, toggleWebcam, toggleMic, setShowSideVi
           <TouchableOpacity onPress={()=>{toggleWebcam(); setCameraOn(!cameraOn)}}>
             <View style={{...styles.bottomMenuButton}}>
               <MaterialCommunityIcons name={cameraOn ? "video-off" : "video"} color="white" size={25} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>{changeWebcam(); setCameraOn(true);}}>
+            <View style={{...styles.bottomMenuButton}}>
+              <MaterialCommunityIcons name="camera-flip" color="white" size={25} />
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={()=>{toggleMic(); setMicOn(!micOn)}}>
@@ -55,7 +60,12 @@ function ControlsContainer({ join, leave, toggleWebcam, toggleMic, setShowSideVi
 }
 
 function ParticipantView({ participantId, cameraOn, isMain=false }) {
-  const { webcamStream, webcamOn } = useParticipant(participantId);
+  const { webcamStream, webcamOn, setQuality } = useParticipant(participantId);
+
+  useEffect(()=>{
+    setQuality(isMain?"high":"low");
+  }, [isMain]);
+
   return webcamOn && webcamStream ? (
     <RTCView
       streamURL={new MediaStream([webcamStream.track]).toURL()}
@@ -95,7 +105,7 @@ function ParticipantList({ participants, showSideVideo, cameraOn }) {
 
 function MeetingView({ onTermination }) {
   // Get `participants` from useMeeting Hook
-  const { join, leave, toggleWebcam, toggleMic, participants } = useMeeting({});
+  const { join, leave, toggleWebcam, toggleMic, participants, changeWebcam } = useMeeting({});
   const participantsArrId = [...participants.keys()]; // Add this line
   const [showSideVideo, setShowSideVideo] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
@@ -120,6 +130,7 @@ function MeetingView({ onTermination }) {
         toggleMic={toggleMic}
         setShowSideVideo={setShowSideVideo}
         cameraOn={cameraOn}
+        changeWebcam={changeWebcam}
         setCameraOn={setCameraOn}
         onTermination={onTermination}
       />
@@ -128,7 +139,6 @@ function MeetingView({ onTermination }) {
 }
 
 export default function VideoSDKCall({ zipcode, onTermination, onMeetIdGeneration, meetId }) {
-  console.log(meetId);
   const [meetingId, setMeetingId] = useState(meetId);
 
   const getMeetingId = async (id) => {
