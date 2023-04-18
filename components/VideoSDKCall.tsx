@@ -147,6 +147,7 @@ export default function VideoSDKCall({ zipcode, onTermination, onMeetIdGeneratio
     onMeetIdGeneration(tempMeetingId);
   };
 
+  
   useEffect(()=>{
     if(!meetId) getMeetingId(meetId);
   },[]);
