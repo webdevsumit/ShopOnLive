@@ -18,17 +18,22 @@ import InsideMeetingScreen from '../pages/InsideMeetingScreen';
 
 const Tab = createBottomTabNavigator();
 
-const TabStack = () => {
+const TabStack = ({hadZipCode, SUPABASE_URL}) => {
   const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
 
-  const [zipcode, setZipcode] = React.useState("NO-ZIPCODE");
-  const [zipBox, setZipBox] = React.useState(false);
+  const [zipcode, setZipcode] = React.useState("");
+  const [zipBox, setZipBox] = React.useState(!hadZipCode);
   const [isSaving, setIsSaving] = React.useState(false);
 
   const setZipcodeInZipcode = async () => {
     try {
       let tempZipcode = await AsyncStorage.getItem('@zipcode');
-      if(!!tempZipcode) setZipcode(tempZipcode);
+      if(!!tempZipcode){
+        setZipcode(tempZipcode);
+      }
+      else{
+        zipBox(true);
+      }
     } catch (e) {console.log(e)};
   }
   React.useEffect(()=>{
@@ -72,15 +77,19 @@ const TabStack = () => {
               textAlignVertical="center"
               textAlign="center"
             />
-            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
               <NormalGreenBtn text={isSaving ? "SAVING..." : "SAVE"} onPress={onChangeZIp} />
-              <NormalGreenBtn text={"CANCEL"} onPress={()=>setZipBox(false)} bgColor="#777" />
+              {hadZipCode && <>
+                <View style={{width: 3}}></View>
+                <NormalGreenBtn text={"CANCEL"} onPress={()=>setZipBox(false)} bgColor="#777" />
+              </>}
             </View>
           </View>
         </View>
       </View>}
       <NavigationContainer>
         <Tab.Navigator
+          initialRouteName={hadZipCode ? "Shops" : "Account"}
           screenOptions={({ route }) => ({
             tabBarHideOnKeyboard: true,
             headerTitle: "",
@@ -179,10 +188,11 @@ const styles = StyleSheet.create({
     padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
+    alignContent: 'center'
   },
   input: {
     height: 40,
-    width: "80%",
+    // width: "100%",
     borderWidth: 1,
     padding: 10,
     color: 'black',

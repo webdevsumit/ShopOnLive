@@ -51,10 +51,10 @@ const AccountEdit = ({ navigation }) => {
       <View style={styles.main}>
         <View style={styles.mainInner}>
           <View style={[styles.inline]}>
-            <MaterialCommunityIcons name="whatsapp" color="green" size={18} />
-            <Text style={[styles.text, styles.textTop]}>{details.country_code} {details.phone}</Text>
+            <MaterialCommunityIcons name="email-outline" color="green" size={18} />
+            <Text style={[styles.text, styles.textTop]}>{details.user.email}</Text>
           </View>
-          <Text style={styles.info}>You cannot change the PHONE number.</Text>
+          <Text style={styles.info}>You cannot change the EMAIL address.</Text>
           <Text style={styles.info}>To change the ZIPCODE click on the zipcode in the top bar.</Text>
 
           <TextInput

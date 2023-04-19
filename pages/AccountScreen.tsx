@@ -58,8 +58,8 @@ const AccountScreen = ({ navigation }) => {
       <View style={styles.main}>
         <View style={styles.mainInner}>
           <View style={[styles.inline]}>
-            <MaterialCommunityIcons name="whatsapp" color="green" size={18} />
-            <Text style={[styles.text, styles.textTop]}>{details.country_code} {details.phone}</Text>
+            <MaterialCommunityIcons name="email-outline" color="green" size={18} />
+            <Text style={[styles.text, styles.textTop]}>{details.user.email}</Text>
           </View>
 
           {details.is_store_owner ? <>
@@ -70,32 +70,37 @@ const AccountScreen = ({ navigation }) => {
             </View>
           </>:
           <>
-            <Text style={styles.info}>You cannot change the PHONE number.</Text>
+            <Text style={styles.info}>You cannot change the EMAIL address.</Text>
             <Text style={styles.info}>To change the ZIPCODE click on the zipcode in the top bar.</Text>
           </>
           }
-
         </View>
+
         {details.is_store_owner?<>
           <Text style={[styles.text, styles.head]}>Billing</Text>
           <View style={styles.mainInner}>
-            <Text style={[styles.text, styles.shopName]}>Video Call Minutes: {(details.unpaidSeconds/60).toFixed(2)}</Text>
-            <Text style={[styles.text, styles.shopName]}>Amount To Pay: Rs. {(details.unpaidAmountInPaisa/60).toFixed(2)}</Text>
-            <Text style={[styles.text, styles.description]}>Last paid on: {moment(details.lastPaidOn).format('DD/MM/YYYY')}</Text>
+            {/* <Text style={[styles.text, styles.shopName]}>Video Call Minutes: {(details.unpaidSeconds/60).toFixed(2)}</Text> */}
+            {/* <Text style={[styles.text, styles.shopName]}>Amount To Pay: Rs. {(details.unpaidAmountInPaisa/60).toFixed(2)}</Text> */}
+            <Text style={[styles.text, styles.shopName]}>CURRENT PLAN: FREE</Text>
+            <Text style={[styles.text, styles.description]}>Subscribed on: {moment(details.lastPaidOn).format('DD/MM/YYYY')}</Text>
             <View style={styles.btnView}>
-              <NormalGreenBtn text="PAY NOW" onPress={()=>{
-                if(details.unpaidAmount>5){
-                  navigation.navigate('BalancePayment');
-                }else showToaster("Unpaid amount should be more than 5.")
+              <NormalGreenBtn text="UPGRADE NOW" onPress={()=>{
+                // if(details.unpaidAmount>5){
+                //   navigation.navigate('BalancePayment');
+                // }
+                // else showToaster("Unpaid amount should be more than 5.")
+                showToaster("Currently, we are not offering any plan.")
               }} />
             </View>
           </View>
           <View style={styles.mainInner}>
             <Text style={{...styles.text, color: 'red'}}>
-              If the gap between last paid date and today is more than 30 days then your shop will temporarily be deactivated.
+              {/* If the gap between last paid date and today is more than 30 days then your shop will temporarily be deactivated. */}
+              Do not worry. Currently everything is free. We will not charge anything if our App will not help you to earn more (in anyway).
             </Text>
           </View>
-        </>:
+        </>
+        :
         <View style={styles.mainInner}>
           <Text style={{...styles.text, color: 'green'}}>
             Opening a shop or store in the market is very hard and take lots of money and time but opening an online shop is very easy just click on the below button.
