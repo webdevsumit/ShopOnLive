@@ -8,6 +8,11 @@ import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart'; 
 
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+
 const AccountScreen = ({ navigation }) => {
   const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
   const [details, setDetails] = useState(null);
@@ -45,6 +50,7 @@ const AccountScreen = ({ navigation }) => {
     } catch(e) {
       console.log(e);
     }
+    await GoogleSignin.signOut();
     RNRestart.restart();
   }
 

@@ -38,7 +38,7 @@ const AfterSearchScreen = ({navigation, route}) => {
 
   useEffect(()=>{
     getShops(page);
-    console.log("After Search Param: ", route.params.searchedText)
+    // console.log("After Search Param: ", route.params.searchedText)
   },[]);
 
   const onCardClick = (id) => {

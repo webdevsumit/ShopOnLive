@@ -1,7 +1,11 @@
-import { StyleSheet, Text, ToastAndroid, FlatList } from 'react-native'
+import { StyleSheet, Text, ToastAndroid, FlatList, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import MeetCard from '../components/MeetCard'
 import { getUpcomingMeetingsAPI } from '../actions/apis';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 const MeetingScreen = ({navigation: { navigate }}) => {
 
@@ -12,6 +16,13 @@ const MeetingScreen = ({navigation: { navigate }}) => {
 	const [caughtAll, setCaughtAll] = useState(false);
 	const [pendingCall, setPendingCall] = useState(false);
   const [isRefereshing, setIsRefereshing] = useState(false)
+  const [provider_token, set_provider_token] = useState(null)
+
+  const fetchprovider_token = async () => { 
+      await GoogleSignin.getTokens().then(({accessToken})=>{
+        set_provider_token(accessToken);
+      }).catch(err=>console.log("Shop Details, line 46: ", err))
+    }
 
   const fetchUpcomingMeetings = async (pageNum) => {
     setPendingCall(true);
@@ -39,10 +50,12 @@ const MeetingScreen = ({navigation: { navigate }}) => {
 
   useEffect(()=>{
     fetchUpcomingMeetings(page);
+    fetchprovider_token();
   },[]);
 
-  const onMeetJoin = (id) => {
-    navigate('InsideMeeting', {'MeetingId': id});
+  const onMeetJoin = (url) => {
+    // navigate('InsideMeeting', {'MeetingId': id});
+    Linking.openURL(url);
   }
 
   const onGivingRatingAndReview = (id) => {
@@ -52,7 +65,7 @@ const MeetingScreen = ({navigation: { navigate }}) => {
   return (
     <FlatList
       data={meetings}
-      renderItem={({item}:any)=><MeetCard key={item.id} meeting={item} onPressStartMeeting={onMeetJoin} onGivingRatingAndReview={onGivingRatingAndReview} />}
+      renderItem={({item}:any)=><MeetCard key={item.id} meeting={item} onPressStartMeeting={onMeetJoin} onGivingRatingAndReview={onGivingRatingAndReview} provider_token={provider_token} />}
       keyExtractor={item => item.id}
       ListEmptyComponent={()=><Text style={styles.noResult}>{caughtAll ? "You do not have any meeting." : ""}</Text>}
       initialNumToRender={10}

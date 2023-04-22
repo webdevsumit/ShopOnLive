@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-// import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, View, Text, TouchableOpacity, TextInput, ToastAndroid } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, ToastAndroid, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppTitle from '../components/AppTitle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,17 +12,21 @@ import AccountStack from './AccountStack';
 import MeetsStack from './MeetsStack';
 import NormalGreenBtn from '../components/NormalGreenBtn';
 import { changeZipcodeAPI } from '../actions/apis';
-import RNRestart from 'react-native-restart'; 
-import InsideMeetingScreen from '../pages/InsideMeetingScreen';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 const Tab = createBottomTabNavigator();
 
-const TabStack = ({hadZipCode, SUPABASE_URL}) => {
+const TabStack = ({hadZipCode}) => {
   const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
 
   const [zipcode, setZipcode] = React.useState("");
   const [zipBox, setZipBox] = React.useState(!hadZipCode);
   const [isSaving, setIsSaving] = React.useState(false);
+  const [allowToCancelZipbox, setAllowToCancelZipbox ] = React.useState(hadZipCode);
+  const [profileUrl, setProfileUrl] = React.useState(null);
 
   const setZipcodeInZipcode = async () => {
     try {
@@ -36,8 +39,16 @@ const TabStack = ({hadZipCode, SUPABASE_URL}) => {
       }
     } catch (e) {console.log(e)};
   }
+
+  const getCurrentUser = async () => {
+    const currentUser = await GoogleSignin.getCurrentUser();
+    console.log("Current User: ", currentUser)
+    if(!!currentUser) setProfileUrl(currentUser.user.photo)
+  };
+
   React.useEffect(()=>{
     setZipcodeInZipcode();
+    getCurrentUser();
   },[]);
 
   const onChangeZIp = async () => {
@@ -50,8 +61,9 @@ const TabStack = ({hadZipCode, SUPABASE_URL}) => {
       if(res.data.status === "success"){
         try {
           await AsyncStorage.setItem('@zipcode', zipcode);
-          showToaster("Changed Successfully.");
-          RNRestart.restart();
+          showToaster("Changed Successfully. Please refresh screen.");
+          zipBox(false);
+          setAllowToCancelZipbox(true);
         } catch (e) {console.log(e)};
       }else showToaster(res.data.message);
     }).catch(err=>showToaster(err.message));
@@ -79,7 +91,7 @@ const TabStack = ({hadZipCode, SUPABASE_URL}) => {
             />
             <View style={{flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center'}}>
               <NormalGreenBtn text={isSaving ? "SAVING..." : "SAVE"} onPress={onChangeZIp} />
-              {hadZipCode && <>
+              {allowToCancelZipbox && <>
                 <View style={{width: 3}}></View>
                 <NormalGreenBtn text={"CANCEL"} onPress={()=>setZipBox(false)} bgColor="#777" />
               </>}
@@ -110,9 +122,9 @@ const TabStack = ({hadZipCode, SUPABASE_URL}) => {
                 iconName = 'video';
               } else if (route.name === 'Account') {
                 iconName = 'account-circle';
-              } else if (route.name === 'InsideMeeting') {
-                iconName = 'none';
-                return <></>;
+                if(!!profileUrl){
+                  return <Image style={{...styles.profileUrlStyle, opacity: focused ? 1: 0.7 }} source={{uri: profileUrl}} />
+                }
               }
               return <MaterialCommunityIcons name={iconName} color={focused ? 'black' : 'gray'} size={size} />;
             },
@@ -133,17 +145,12 @@ const TabStack = ({hadZipCode, SUPABASE_URL}) => {
           <Tab.Screen
             name="Meetings"
             component={MeetsStack}
-            // options={{title: 'Meets', tabBarStyle:{display:'none'}, headerShown: false}}
+            options={{title: 'Meets', unmountOnBlur: true}}
           />
           <Tab.Screen
             name="Account"
             component={AccountStack}
             options={{title: 'Account'}}
-          />
-          <Tab.Screen
-            name="InsideMeeting"
-            component={InsideMeetingScreen}
-            options={{title: '', tabBarStyle:{display:'none'}, headerShown: false, tabBarButton: ()=><></>, unmountOnBlur: true}}
           />
         </Tab.Navigator>
       </NavigationContainer>
@@ -199,4 +206,11 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     marginBottom: 20,
   },
+  profileUrlStyle: {
+    width: 20, 
+    height: 20, 
+    borderRadius: 10, 
+    borderColor: 'black', 
+    borderWidth:1
+  }
 })

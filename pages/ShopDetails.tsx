@@ -7,14 +7,20 @@ import {
   ScrollView,
   RefreshControl,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {getShopDetailsByIdAPI, scheduleNewMeetingAPI} from '../actions/apis';
+import {getShopDetailsByIdAPI, googleEventCreaterAPI, scheduleNewMeetingAPI, updateGoogleEventAPI} from '../actions/apis';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DatePicker from 'react-native-date-picker';
 import NormalGreenBtn from '../components/NormalGreenBtn';
 import moment from 'moment';
 import ReviewCard from '../components/ReviewCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 
 const ShopDetails = ({route}) => {
   const showToaster = (message: any) => {
@@ -32,6 +38,15 @@ const ShopDetails = ({route}) => {
   const [openDatePicker, setOpenDatePicker] = useState(false);
   const [isRefereshing, setIsRefereshing] = useState(false);
   const [showConfirmBox, setShowConfirmBox] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [provider_token, set_provider_token] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchprovider_token = async () => { 
+    await GoogleSignin.getTokens().then(({accessToken})=>{
+      set_provider_token(accessToken);
+    }).catch(err=>console.log("Shop Details, line 46: ", err))
+  }
 
   const fetchDetails = async () => {
     setIsRefereshing(true);
@@ -39,6 +54,7 @@ const ShopDetails = ({route}) => {
       .then(res => {
         if (res.data.status === 'success') {
           setShop(res.data.data);
+          setUserEmail(res.data.userEmail);
         } else showToaster(res.data.message);
       })
       .catch(err => showToaster(err.message));
@@ -47,26 +63,92 @@ const ShopDetails = ({route}) => {
 
   useEffect(() => {
     fetchDetails();
+    fetchprovider_token();
   }, []);
 
   const scheduelMeet = async () => {
     if(moment(meetDateTime) < moment()){
-      showToaster("Please select future date and time. We can't change the past.");
+      showToaster("Please the select future date and time. We can't change the past.");
+      return;
+    }
+    if(shop.user.email===userEmail){
+      showToaster("You cannot schedule meeting to yourself.");
       return;
     }
 
-    let payload = {
-      seller_id: route.params.shopId,
-      meetTime: meetDateTime,
+    setIsLoading(true);
+    const conferenceData = {
+      // 'allowedConferenceSolutionTypes': ['hangoutsMeet'],
+      'createRequest': {
+        'requestId': `meet-${Math.random().toString(36).substring(7)}`,
+        'conferenceSolutionKey': {
+          'type': 'hangoutsMeet',
+        },
+      },
+    };
+
+    const event = {
+      'summary': 'ShopOnLive Meeting',
+      'description': "I want to buy something.",
+      'start': {
+        'dateTime': meetDateTime.toISOString(),
+        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone // current timeZone
+      },
+      'end': {
+        'dateTime': moment(meetDateTime).add(40, 'minutes').toISOString(),
+        'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone // current timeZone
+      },
+      'conferenceDataVersion': 1,
+      'conferenceData': conferenceData,
+      'organizer': {
+        'email': shop.store_name,
+        'self': true,
+      },
+      "attendees": [
+        {
+          "email": userEmail,
+          "displayName": "Client",
+          "organizer": true,
+          "self": true,
+          "responseStatus": "accepted"
+        },
+        {
+          'email': shop.user.email,
+          "displayName": shop.store_name,
+          "organizer": true,
+          'self': true,
+          "responseStatus": "accepted",
+        },
+      ],
     }
 
-    await scheduleNewMeetingAPI(payload).then(res=>{
-      if(res.data.status === "success"){
-        setShowConfirmBox(true);
-      }else{
-        showToaster(res.data.message);
+    if(!provider_token){
+      showToaster("ERROR: Please Logout and Login again.");
+      return;
+    }
+
+    let eventData = null;
+    await googleEventCreaterAPI(JSON.stringify(event), provider_token).then(async res=>{
+      // console.log("link: ",res.data.hangoutLink);
+      eventData = res.data;
+    }).catch(err=>console.log(err));
+
+    if(!!eventData){
+      let payload = {
+        seller_id: route.params.shopId,
+        meetTime: meetDateTime,
+        eventId: eventData.id,
+        hangoutLink: eventData.hangoutLink,
       }
-    }).catch(err => showToaster(err.message));
+      await scheduleNewMeetingAPI(payload).then(res=>{
+        if(res.data.status === "success"){
+          setShowConfirmBox(true);
+        }else{
+          showToaster(res.data.message);
+        }
+      }).catch(err => console.log(err));
+    }else showToaster("Something went wrong. Please call us.");
+    setIsLoading(false);
   }
 
   if (!!shop)
@@ -76,10 +158,15 @@ const ShopDetails = ({route}) => {
           <View style={styles.confirmedBox}>
             <Text style={styles.confirmText}>Your shoping time is scheduled on </Text>
             <Text style={{...styles.confirmText, marginBottom: 5, color: 'red'}}>{moment(meetDateTime).format("DD/MM/yyyy")} at {moment(meetDateTime).format("hh:mm a")}.</Text>
-            <Text style={{...styles.confirmText, marginBottom: 10}}>You can also check and join from meets tab.</Text>
+            <Text style={{...styles.confirmText, marginBottom: 10}}>You can also check and join from meets tab or on Goolge Calendar.</Text>
             <NormalGreenBtn text="OKAY" onPress={()=>setShowConfirmBox(false)} />
           </View>
         </View>}
+        {isLoading && (
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={isRefereshing} onRefresh={fetchDetails} />
@@ -195,5 +282,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     // margin: 5
-  }
+  },
+  loading: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    zIndex: 2,
+  },
 });
