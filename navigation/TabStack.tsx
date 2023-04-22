@@ -42,7 +42,6 @@ const TabStack = ({hadZipCode}) => {
 
   const getCurrentUser = async () => {
     const currentUser = await GoogleSignin.getCurrentUser();
-    console.log("Current User: ", currentUser)
     if(!!currentUser) setProfileUrl(currentUser.user.photo)
   };
 
