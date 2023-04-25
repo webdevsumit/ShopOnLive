@@ -61,7 +61,7 @@ const TabStack = ({hadZipCode}) => {
         try {
           await AsyncStorage.setItem('@zipcode', zipcode);
           showToaster("Changed Successfully. Please refresh screen.");
-          zipBox(false);
+          setZipBox(false);
           setAllowToCancelZipbox(true);
         } catch (e) {console.log(e)};
       }else showToaster(res.data.message);
