@@ -1,4 +1,4 @@
-import {Button, StyleSheet, Text, View} from 'react-native';
+import {Button, Linking, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import AppTitle from './AppTitle';
 import LinkBtn from './LinkBtn';
