@@ -3,7 +3,7 @@ import React from 'react';
 import AppTitle from './AppTitle';
 import LinkBtn from './LinkBtn';
 
-const Landing = ({onPressGoogleButton, initialLoading}) => {
+const Landing = ({onPressGoogleButton, initialLoading, extraMessage}) => {
   return (
     <View style={styles.main}>
       <AppTitle />
@@ -34,6 +34,9 @@ const Landing = ({onPressGoogleButton, initialLoading}) => {
             onPress={() => Linking.openURL('https://shoponlive.in/privacyPolicy')}
           />
         </View>
+      </View>
+      <View style={{...styles.innerView, paddingVertical: '10%' }}>
+        {!!extraMessage && <Text style={{color: 'red'}}>{extraMessage}</Text>}
       </View>
     </View>
   );

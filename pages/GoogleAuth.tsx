@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   StyleSheet,
   Text,
   ToastAndroid,
@@ -17,6 +18,8 @@ import {
 const GoogleAuth = ({setIsLogedIn, setHadZipCode}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [extraMessage, setExtraMessage] = useState('');
+
   const showToaster = (message: any) => {
     ToastAndroid.showWithGravityAndOffset(
       message,
@@ -45,12 +48,14 @@ const GoogleAuth = ({setIsLogedIn, setHadZipCode}) => {
               checkAuthenticationOnBE(userInfo.user);
             })
             .catch(e => {
-              console.log('ERROR IS: ' + JSON.stringify(e));
+              showToaster('ERROR: ' + JSON.stringify(e));
+              setExtraMessage(JSON.stringify(e));
+              setIsLoading(false);
             });
-        }
+        }else showToaster('You do not have Play Service.');
       })
       .catch(e => {
-        console.log('ERROR IS: ' + JSON.stringify(e));
+        showToaster('ERROR: ' + JSON.stringify(e));
       });
   };
 
@@ -97,14 +102,14 @@ const GoogleAuth = ({setIsLogedIn, setHadZipCode}) => {
           try {
             await AsyncStorage.setItem('@token', res.data.token);
           } catch (e) {
-            console.log(e);
+            showToaster(JSON.stringify(e));
           }
           if (!!res.data.zipcode) {
             try {
               await AsyncStorage.setItem('@zipcode', res.data.zipcode);
               setHadZipCode(true);
             } catch (e) {
-              console.log(e);
+              showToaster(JSON.stringify(e));
             }
           }
           setIsLogedIn(true);
@@ -131,6 +136,7 @@ const GoogleAuth = ({setIsLogedIn, setHadZipCode}) => {
           setIsLoading(true);
         }}
         initialLoading={initialLoading}
+        extraMessage={extraMessage}
       />
     </View>
   );
