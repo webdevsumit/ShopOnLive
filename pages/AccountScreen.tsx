@@ -8,10 +8,6 @@ import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart'; 
 
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
 
 const AccountScreen = ({ navigation }) => {
   const showToaster = (message: any) => {ToastAndroid.showWithGravityAndOffset(message, ToastAndroid.LONG, ToastAndroid.CENTER,25,50,);}
@@ -50,7 +46,6 @@ const AccountScreen = ({ navigation }) => {
     } catch(e) {
       console.log(e);
     }
-    await GoogleSignin.signOut();
     RNRestart.restart();
   }
 
@@ -118,7 +113,8 @@ const AccountScreen = ({ navigation }) => {
             Don't think twice. You can deactivate your shop whenever you want.
           </Text>
           <View style={styles.btnView}>
-            <NormalGreenBtn text="BECOME A SELLER" onPress={()=>navigation.navigate('AccountEdit')} />
+            {/* <NormalGreenBtn text="BECOME A SELLER" onPress={()=>navigation.navigate('AccountEdit')} /> */}
+            <NormalGreenBtn text="BECOME A SELLER" onPress={()=>{Linking.openURL('https://shoponlive.in')}} />
           </View>
         </View>
         }

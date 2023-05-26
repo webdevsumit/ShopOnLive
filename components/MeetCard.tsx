@@ -28,7 +28,6 @@ const MeetCard = ({
   meeting,
   onPressStartMeeting,
   onGivingRatingAndReview,
-  provider_token,
 }: Props) => {
   const [meet, setMeet] = useState(meeting);
   const [meetDateTime, setMeetDateTime] = useState(new Date());

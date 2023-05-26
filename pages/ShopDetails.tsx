@@ -17,10 +17,6 @@ import NormalGreenBtn from '../components/NormalGreenBtn';
 import moment from 'moment';
 import ReviewCard from '../components/ReviewCard';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
 
 const ShopDetails = ({route}) => {
   const showToaster = (message: any) => {
@@ -39,14 +35,7 @@ const ShopDetails = ({route}) => {
   const [isRefereshing, setIsRefereshing] = useState(false);
   const [showConfirmBox, setShowConfirmBox] = useState(false);
   const [userEmail, setUserEmail] = useState('');
-  const [provider_token, set_provider_token] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const fetchprovider_token = async () => { 
-    await GoogleSignin.getTokens().then(({accessToken})=>{
-      set_provider_token(accessToken);
-    }).catch(err=>console.log("Shop Details, line 46: ", err))
-  }
 
   const fetchDetails = async () => {
     setIsRefereshing(true);
@@ -63,7 +52,6 @@ const ShopDetails = ({route}) => {
 
   useEffect(() => {
     fetchDetails();
-    fetchprovider_token();
   }, []);
 
   const scheduelMeet = async () => {
@@ -122,32 +110,20 @@ const ShopDetails = ({route}) => {
       ],
     }
 
-    if(!provider_token){
-      showToaster("ERROR: Please Logout and Login again.");
-      return;
+    let payload = {
+      seller_id: route.params.shopId,
+      meetTime: meetDateTime,
+      // eventId: "eventData.id",
+      // hangoutLink: eventData.hangoutLink,
     }
-
-    let eventData = null;
-    await googleEventCreaterAPI(JSON.stringify(event), provider_token).then(async res=>{
-      // console.log("link: ",res.data.hangoutLink);
-      eventData = res.data;
-    }).catch(err=>console.log(err));
-
-    if(!!eventData){
-      let payload = {
-        seller_id: route.params.shopId,
-        meetTime: meetDateTime,
-        eventId: eventData.id,
-        hangoutLink: eventData.hangoutLink,
+    await scheduleNewMeetingAPI(payload).then(res=>{
+      if(res.data.status === "success"){
+        setShowConfirmBox(true);
+      }else{
+        showToaster(res.data.message);
       }
-      await scheduleNewMeetingAPI(payload).then(res=>{
-        if(res.data.status === "success"){
-          setShowConfirmBox(true);
-        }else{
-          showToaster(res.data.message);
-        }
-      }).catch(err => console.log(err));
-    }else showToaster("Something went wrong. Please call us.");
+    }).catch(err => console.log(err));
+
     setIsLoading(false);
   }
 

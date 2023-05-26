@@ -14,7 +14,7 @@ import TabStack from './navigation/TabStack';
 import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NormalGreenBtn from './components/NormalGreenBtn';
-import GoogleAuth from './pages/GoogleAuth';
+import Auth from './pages/Auth';
 
 
 function App(): JSX.Element {
@@ -29,7 +29,7 @@ function App(): JSX.Element {
       />
         {!isLogedIn ? (
           <>
-            <GoogleAuth setIsLogedIn={setIsLogedIn} setHadZipCode={setHadZipCode} />
+            <Auth setIsLogedIn={setIsLogedIn} setHadZipCode={setHadZipCode} />
           </>
         ) : (
           <>

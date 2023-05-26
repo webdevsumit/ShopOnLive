@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {checkAuthenticationAPI, setOrCheckUserAuthAPI} from '../actions/apis';
+import {setOrCheckUserAuthAPI} from '../actions/apis';
 import Landing from '../components/Landing';
 import {
   GoogleSignin,
@@ -120,7 +120,7 @@ const GoogleAuth = ({setIsLogedIn, setHadZipCode}) => {
   };
 
   useEffect(() => {
-    initialGoogleCheck();
+    // initialGoogleCheck();
   }, []);
 
   return (
@@ -131,10 +131,6 @@ const GoogleAuth = ({setIsLogedIn, setHadZipCode}) => {
         </View>
       )}
       <Landing
-        onPressGoogleButton={() => {
-          continueWithGoogle();
-          setIsLoading(true);
-        }}
         initialLoading={initialLoading}
         extraMessage={extraMessage}
       />

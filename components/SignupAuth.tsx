@@ -8,10 +8,16 @@ interface Props {
   setData: (params: any) => any;
 }
 
-const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
+const SignupAuth = ({data, setData, onBack, onClickSignin}: Props) => {
   
   const onUsernameChange = (val: any) => {
     setData({...data, username: val.replace(/ /g,"_")})
+  }
+  const onEmailChange = (val: any) => {
+    setData({...data, email: val})
+  }
+  const onPhoneChange = (val: any) => {
+    setData({...data, phone: val})
   }
   const onChangePassword = (val: any) => {
     setData({...data, password: val})
@@ -26,12 +32,43 @@ const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
               style={styles.input}
               onChangeText={onUsernameChange}
               value={data.username}
-              placeholder="Enter username."
+              placeholder="Create username."
               autoComplete='username'
               cursorColor='#555'
               maxLength={20}
               placeholderTextColor='#aaa'
               autoCapitalize='none'
+            />
+          </View>
+          <View style={styles.wrapperView}>
+            <Text style={styles.text}>Email</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onEmailChange}
+              value={data.email}
+              placeholder="example@gmail.com."
+              keyboardType="email-address"
+              autoComplete='email'
+              cursorColor='#555'
+              inputMode='email'
+              maxLength={254}
+              placeholderTextColor='#aaa'
+              autoCapitalize='none'
+            />
+          </View>
+          <View style={styles.wrapperView}>
+            <Text style={styles.text}>Phone Number</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onPhoneChange}
+              value={data.phone}
+              placeholder="Enter 10 digit phone number."
+              keyboardType="number-pad"
+              autoComplete='tel-national'
+              cursorColor='#555'
+              inputMode='tel'
+              maxLength={10}
+              placeholderTextColor='#aaa'
             />
           </View>
           <View style={{...styles.wrapperView, marginBottom: 30}}>
@@ -40,7 +77,7 @@ const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
               style={styles.input}
               onChangeText={onChangePassword}
               value={data.password}
-              placeholder="Enter password."
+              placeholder="Create password."
               autoComplete='password'
               autoCapitalize='none'
               cursorColor='#555'
@@ -49,7 +86,7 @@ const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
               placeholderTextColor='#aaa'
             />
           </View>
-          <NormalGreenBtn text="LOGIN" onPress={onClickLogin} />
+          <NormalGreenBtn text="SIGNUP" onPress={onClickSignin} />
           <View style={{...styles.wrapperView, alignItems: 'center'}}>
             <LinkBtn text="back" textColor="gray" onPress={onBack} />
           </View>
@@ -58,7 +95,7 @@ const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
   );
 };
 
-export default NormalAuth;
+export default SignupAuth;
 
 const styles = StyleSheet.create({
   main: {

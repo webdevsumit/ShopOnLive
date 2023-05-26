@@ -12,10 +12,6 @@ import AccountStack from './AccountStack';
 import MeetsStack from './MeetsStack';
 import NormalGreenBtn from '../components/NormalGreenBtn';
 import { changeZipcodeAPI } from '../actions/apis';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
 
 const Tab = createBottomTabNavigator();
 
@@ -26,7 +22,7 @@ const TabStack = ({hadZipCode}) => {
   const [zipBox, setZipBox] = React.useState(!hadZipCode);
   const [isSaving, setIsSaving] = React.useState(false);
   const [allowToCancelZipbox, setAllowToCancelZipbox ] = React.useState(hadZipCode);
-  const [profileUrl, setProfileUrl] = React.useState(null);
+  // const [profileUrl, setProfileUrl] = React.useState(null);
 
   const setZipcodeInZipcode = async () => {
     try {
@@ -40,14 +36,14 @@ const TabStack = ({hadZipCode}) => {
     } catch (e) {console.log(e)};
   }
 
-  const getCurrentUser = async () => {
-    const currentUser = await GoogleSignin.getCurrentUser();
-    if(!!currentUser) setProfileUrl(currentUser.user.photo)
-  };
+  // const getCurrentUser = async () => {
+  //   const currentUser = await getProfilePhoto();
+  //   if(!!currentUser) setProfileUrl(currentUser.user.photo)
+  // };
 
   React.useEffect(()=>{
     setZipcodeInZipcode();
-    getCurrentUser();
+    // getCurrentUser();
   },[]);
 
   const onChangeZIp = async () => {
@@ -121,9 +117,9 @@ const TabStack = ({hadZipCode}) => {
                 iconName = 'video';
               } else if (route.name === 'Account') {
                 iconName = 'account-circle';
-                if(!!profileUrl){
-                  return <Image style={{...styles.profileUrlStyle, opacity: focused ? 1: 0.7 }} source={{uri: profileUrl}} />
-                }
+                // if(!!profileUrl){
+                //   return <Image style={{...styles.profileUrlStyle, opacity: focused ? 1: 0.7 }} source={{uri: profileUrl}} />
+                // }
               }
               return <MaterialCommunityIcons name={iconName} color={focused ? 'black' : 'gray'} size={size} />;
             },
