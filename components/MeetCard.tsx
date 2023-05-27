@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   ToastAndroid,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -120,12 +121,16 @@ const MeetCard = ({
 
   const onClickConfirm = async () => {
     if (canConfirm) {
-      await confirmMeetingByIdAPI(meet.id).then(res => {
-        if (res.data.status === 'success') {
-          setMeet(res.data.meeting);
-          showToaster('Meeting is confirmed by you to join.');
-        } else showToaster(res.data.message);
-      });
+      if(!meet.hangoutLink && meet.is_seller){
+        Linking.openURL(`https://shoponlive.in/meeting/${meet.id}/confirm/`)
+      }else{
+        await confirmMeetingByIdAPI(meet.id).then(res => {
+          if (res.data.status === 'success') {
+            setMeet(res.data.meeting);
+            showToaster('Meeting is confirmed by you to join.');
+          } else showToaster(res.data.message);
+        });
+      }
     } else showToaster('You are already confirm to join the meeting.');
   };
 
