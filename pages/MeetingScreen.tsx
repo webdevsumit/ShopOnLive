@@ -1,7 +1,14 @@
-import { StyleSheet, Text, ToastAndroid, FlatList, Linking } from 'react-native'
+import { StyleSheet, View, Text, ToastAndroid, FlatList, Linking } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import MeetCard from '../components/MeetCard'
 import { getUpcomingMeetingsAPI } from '../actions/apis';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import NormalGreenBtn from '../components/NormalGreenBtn';
+
+var googleTextCallBackFunc = () => {};
 
 const MeetingScreen = ({navigation: { navigate }}) => {
 
@@ -12,6 +19,45 @@ const MeetingScreen = ({navigation: { navigate }}) => {
 	const [caughtAll, setCaughtAll] = useState(false);
 	const [pendingCall, setPendingCall] = useState(false);
   const [isRefereshing, setIsRefereshing] = useState(false)
+  const [google_provider_token, set_google_provider_token] = useState('');
+  const [isSignedInByGoogle, setIsSignedInByGoogle] = useState(false);
+  const [showGoogleSignInMessage, setShowGoogleSignInMessage] = useState(false);
+
+  const configureGoogleSingin = async () => {
+
+    if(!!google_provider_token){
+      return;
+    }
+
+    GoogleSignin.configure({
+      androidClientId: '983190905763-4j2fm6r4lrau3mtr9012sipttckloobt.apps.googleusercontent.com',
+      scopes: ['https://www.googleapis.com/auth/calendar'],
+    });
+
+    continueWithGoogle();
+    
+  };
+
+  const continueWithGoogle = async () => {
+    await GoogleSignin.hasPlayServices()
+      .then(hasPlayService => {
+        if (hasPlayService) {
+          GoogleSignin.signIn()
+            .then(async (userInfo) => {
+              GoogleSignin.getTokens().then(({accessToken})=>{
+                set_google_provider_token(accessToken);
+              }).catch(err=>console.log("Shop Details, line 46: ", err))
+            })
+            .catch(e => {
+              showToaster('ERROR: ' + JSON.stringify(e));
+            });
+        }else showToaster('You do not have Play Service.');
+      })
+      .catch(e => {
+        showToaster('ERROR: ' + JSON.stringify(e));
+      });
+
+  };
 
   const fetchUpcomingMeetings = async (pageNum) => {
     setPendingCall(true);
@@ -37,8 +83,13 @@ const MeetingScreen = ({navigation: { navigate }}) => {
     fetchUpcomingMeetings(1);
   }
 
+  const checkGoogleSignInStatus = async () => {
+    setIsSignedInByGoogle(await GoogleSignin.isSignedIn());
+  }
+
   useEffect(()=>{
     fetchUpcomingMeetings(page);
+    checkGoogleSignInStatus();
   },[]);
 
   const onMeetJoin = (url) => {
@@ -50,23 +101,37 @@ const MeetingScreen = ({navigation: { navigate }}) => {
     navigate('givingRatingAndReview', {'MeetId': id});
   }
 
-  return (
-    <FlatList
-      data={meetings}
-      renderItem={({item}:any)=><MeetCard key={item.id} meeting={item} onPressStartMeeting={onMeetJoin} onGivingRatingAndReview={onGivingRatingAndReview} />}
-      keyExtractor={item => item.id}
-      ListEmptyComponent={()=><Text style={styles.noResult}>{caughtAll ? "You do not have any meeting." : ""}</Text>}
-      initialNumToRender={10}
-      onEndReachedThreshold={1}
-      onEndReached={(info) => {
-        if(!caughtAll && !pendingCall){
-          fetchUpcomingMeetings(page+1);
-        }
-      }}
-      ListFooterComponent={()=><Text style={styles.noResult}>{!caughtAll ? "loading..." : ""}</Text>}
-      refreshing={isRefereshing}
-      onRefresh={resetParamOnReferesh}
-    />
+  const onShowGoogleText = (func) => {
+    googleTextCallBackFunc = func;
+    setShowGoogleSignInMessage(true);
+  }
+
+  return (<>
+        {showGoogleSignInMessage && <View style={{...styles.messagePopupOuter}}>
+          <View style={styles.messagePopup}>
+            <Text style={styles.textMessage}>
+              We need your google calendar access to schedule a meeting and to add time on calendar. Please click the below button to continue. 
+            </Text>
+            <NormalGreenBtn text="CONTINUE" onPress={googleTextCallBackFunc} />
+          </View>
+        </View>}
+      <FlatList
+        data={meetings}
+        renderItem={({item}:any)=><MeetCard key={item.id} meeting={item} google_provider_token={google_provider_token} configureGoogleSingin={configureGoogleSingin} isSignedInByGoogle={isSignedInByGoogle} setShowGoogleSignInMessage={setShowGoogleSignInMessage} onShowGoogleText={onShowGoogleText} onPressStartMeeting={onMeetJoin} onGivingRatingAndReview={onGivingRatingAndReview} />}
+        keyExtractor={item => item.id}
+        ListEmptyComponent={()=><Text style={styles.noResult}>{caughtAll ? "You do not have any meeting." : ""}</Text>}
+        initialNumToRender={10}
+        onEndReachedThreshold={1}
+        onEndReached={(info) => {
+          if(!caughtAll && !pendingCall){
+            fetchUpcomingMeetings(page+1);
+          }
+        }}
+        ListFooterComponent={()=><Text style={styles.noResult}>{!caughtAll ? "loading..." : ""}</Text>}
+        refreshing={isRefereshing}
+        onRefresh={resetParamOnReferesh}
+      />
+  </>
   )
 }
 
@@ -78,5 +143,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
     color: 'black'
+  },
+  textMessage: {
+    color: 'green',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginVertical: 20
+  },
+  messagePopupOuter: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    zIndex: 3,
+    backgroundColor: 'rgba(0,0,0,0.3)'
+  },
+  messagePopup: {
+    width: '90%',
+    minHeight: "30%",
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center'
   }
 })

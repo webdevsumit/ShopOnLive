@@ -35,7 +35,7 @@ const SignupAuth = ({data, setData, onBack, onClickSignin}: Props) => {
               placeholder="Create username."
               autoComplete='username'
               cursorColor='#555'
-              maxLength={20}
+              maxLength={30}
               placeholderTextColor='#aaa'
               autoCapitalize='none'
             />
@@ -82,7 +82,7 @@ const SignupAuth = ({data, setData, onBack, onClickSignin}: Props) => {
               autoCapitalize='none'
               cursorColor='#555'
               secureTextEntry={true}
-              maxLength={20}
+              maxLength={30}
               placeholderTextColor='#aaa'
             />
           </View>

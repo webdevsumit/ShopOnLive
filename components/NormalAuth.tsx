@@ -29,7 +29,7 @@ const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
               placeholder="Enter username."
               autoComplete='username'
               cursorColor='#555'
-              maxLength={20}
+              maxLength={30}
               placeholderTextColor='#aaa'
               autoCapitalize='none'
             />
@@ -45,7 +45,7 @@ const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
               autoCapitalize='none'
               cursorColor='#555'
               secureTextEntry={true}
-              maxLength={20}
+              maxLength={30}
               placeholderTextColor='#aaa'
             />
           </View>

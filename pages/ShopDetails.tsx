@@ -56,7 +56,7 @@ const ShopDetails = ({route}) => {
 
   const scheduelMeet = async () => {
     if(moment(meetDateTime) < moment()){
-      showToaster("Please the select future date and time. We can't change the past.");
+      showToaster("Please select the future date and time. We can't change the past.");
       return;
     }
     if(shop.user.email===userEmail){
