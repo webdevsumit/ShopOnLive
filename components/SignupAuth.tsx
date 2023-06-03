@@ -1,5 +1,5 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
-import React from 'react';
+import {Platform, StyleSheet, Text, TextInput, View} from 'react-native';
+import React, { useState } from 'react';
 import NormalGreenBtn from './NormalGreenBtn';
 import LinkBtn from './LinkBtn';
 
@@ -11,10 +11,11 @@ interface Props {
 const SignupAuth = ({data, setData, onBack, onClickSignin}: Props) => {
   
   const onUsernameChange = (val: any) => {
-    setData({...data, username: val.replace(/ /g,"_")})
+    let finalVal = val.toLowerCase().replace(/ /g,"");
+    setData({...data, username: finalVal });
   }
   const onEmailChange = (val: any) => {
-    setData({...data, email: val})
+    setData({...data, email: val.toLowerCase().replace(/ /g,"")})
   }
   const onPhoneChange = (val: any) => {
     setData({...data, phone: val})
@@ -35,6 +36,7 @@ const SignupAuth = ({data, setData, onBack, onClickSignin}: Props) => {
               placeholder="Create username."
               autoComplete='username'
               cursorColor='#555'
+              keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
               maxLength={30}
               placeholderTextColor='#aaa'
               autoCapitalize='none'
@@ -47,10 +49,10 @@ const SignupAuth = ({data, setData, onBack, onClickSignin}: Props) => {
               onChangeText={onEmailChange}
               value={data.email}
               placeholder="example@gmail.com."
-              keyboardType="email-address"
+              keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
               autoComplete='email'
               cursorColor='#555'
-              inputMode='email'
+              // inputMode='email'
               maxLength={254}
               placeholderTextColor='#aaa'
               autoCapitalize='none'

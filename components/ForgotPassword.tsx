@@ -9,7 +9,7 @@ const ForgotPassword = ({data, setData, onBack, onClickResetPass, setIsLoading }
   const [sentOtp, setSentOtp] = useState(false);
   
   const onUsernameChange = (val: any) => {
-    setData({...data, username: val.replace(/ /g,"_")})
+    setData({...data, username: val.toLowerCase().replace(/ /g,"")})
   }
   const onChangeOtp = (val: any) => {
     setData({...data, otp: val})
@@ -60,6 +60,7 @@ const ForgotPassword = ({data, setData, onBack, onClickResetPass, setIsLoading }
               value={data.username}
               placeholder="Enter username."
               autoComplete='username'
+              keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
               cursorColor='#555'
               maxLength={30}
               placeholderTextColor='#aaa'

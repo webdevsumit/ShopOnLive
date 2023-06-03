@@ -1,4 +1,4 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {Platform, StyleSheet, Text, TextInput, View} from 'react-native';
 import React from 'react';
 import NormalGreenBtn from './NormalGreenBtn';
 import LinkBtn from './LinkBtn';
@@ -6,7 +6,7 @@ import LinkBtn from './LinkBtn';
 const NormalAuth = ({data, setData, onBack, onClickForgotPass, onClickLogin }) => {
   
   const onUsernameChange = (val: any) => {
-    setData({...data, username: val.replace(/ /g,"_")})
+    setData({...data, username: val.toLowerCase().replace(/ /g,"")})
   }
   const onChangePassword = (val: any) => {
     setData({...data, password: val})
@@ -24,6 +24,7 @@ const NormalAuth = ({data, setData, onBack, onClickForgotPass, onClickLogin }) =
               placeholder="Enter username."
               autoComplete='username'
               cursorColor='#555'
+              keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
               maxLength={30}
               placeholderTextColor='#aaa'
               autoCapitalize='none'
