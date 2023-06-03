@@ -3,12 +3,7 @@ import React from 'react';
 import NormalGreenBtn from './NormalGreenBtn';
 import LinkBtn from './LinkBtn';
 
-interface Props {
-  data: any;
-  setData: (params: any) => any;
-}
-
-const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
+const NormalAuth = ({data, setData, onBack, onClickForgotPass, onClickLogin }) => {
   
   const onUsernameChange = (val: any) => {
     setData({...data, username: val.replace(/ /g,"_")})
@@ -51,6 +46,9 @@ const NormalAuth = ({data, setData, onBack, onClickLogin}: Props) => {
           </View>
           <NormalGreenBtn text="LOGIN" onPress={onClickLogin} />
           <View style={{...styles.wrapperView, alignItems: 'center'}}>
+            <View style={{marginVertical: 2}}></View>
+            <LinkBtn text="Forgot Password" textColor="gray" onPress={onClickForgotPass} />
+            <View style={{marginVertical: 4}}></View>
             <LinkBtn text="back" textColor="gray" onPress={onBack} />
           </View>
         </View>

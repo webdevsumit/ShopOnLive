@@ -60,12 +60,12 @@ const MeetCard = ({
   let canJoin =
     meet.is_confirmed_by_seller &&
     meet.is_confirmed_by_user &&
-    moment(meet.datetime).subtract({hours: 0, minutes: 30, seconds: 0}) <
+    moment(meet.datetime).subtract({hours: 0, minutes: 10, seconds: 0}) <
       moment() &&
     !meet.is_canceled;
   let canRechedule =
-    moment(meet.datetime).subtract({hours: 0, minutes: 30, seconds: 0}) >
-      moment() && !meet.is_canceled;
+    (moment(meet.datetime).subtract({hours: 0, minutes: 10, seconds: 0}) >
+      moment() || !meet.is_confirmed_by_seller || !meet.is_confirmed_by_user) && !meet.is_canceled;
   let canConfirm =
     ((!meet.is_confirmed_by_seller && meet.is_seller) ||
       (!meet.is_confirmed_by_user && !meet.is_seller)) &&
@@ -101,10 +101,10 @@ const MeetCard = ({
     } else if (meet.is_canceled) {
       showToaster('This meeting is canceled by someone.');
     } else if (
-      moment(meet.datetime).subtract({hours: 0, minutes: 30, seconds: 0}) <
+      moment(meet.datetime).subtract({hours: 0, minutes: 10, seconds: 0}) <
       moment()
     ) {
-      showToaster('You can just reschedule the meeting before 30 minutes.');
+      showToaster('You can just reschedule the meeting before 10 minutes.');
     }
   };
 
@@ -121,10 +121,10 @@ const MeetCard = ({
     } else if (meet.is_canceled) {
       showToaster('This meeting is canceled by someone.');
     } else if (
-      moment(meet.datetime).subtract({hours: 0, minutes: 30, seconds: 0}) <
+      moment(meet.datetime).subtract({hours: 0, minutes: 10, seconds: 0}) <
       moment()
     ) {
-      showToaster('You can just reschedule the meeting before 30 minutes.');
+      showToaster('You can just reschedule the meeting before 10 minutes.');
     }
   };
 

@@ -55,7 +55,7 @@ const AccountEdit = ({ navigation }) => {
             <Text style={[styles.text, styles.textTop]}>{details.user.email}</Text>
           </View>
           <Text style={styles.info}>You cannot change the EMAIL address.</Text>
-          <Text style={styles.info}>To change the ZIPCODE click on the zipcode in the top bar.</Text>
+          <Text style={styles.info}>To change the PINCODE click on the pincode in the top bar.</Text>
 
           <TextInput
               style={styles.input}

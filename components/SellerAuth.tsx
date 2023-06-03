@@ -32,12 +32,12 @@ const SellerAuth = ({ data, setData }: Props) => {
             />
           </View>
           <View style={styles.wrapperView}>
-            <Text style={styles.text}>Area Zipcode</Text>
+            <Text style={styles.text}>Area Pincode</Text>
             <TextInput
               style={styles.input}
               onChangeText={onZipCodeChange}
               value={data.zipcode}
-              placeholder="Enter zipcode/pincode."
+              placeholder="Enter Pincode."
               keyboardType="number-pad"
               autoComplete='postal-code'
               cursorColor='#555'

@@ -95,6 +95,42 @@ export async function loginToUserAccountAPI(payload) {
     });
 }
 
+export async function sendOtpToResetPasswordAPI(payload) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}sendOtpToResetPassword/`,
+            payload,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    // 'Authorization': `Token ${token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
+export async function resetPasswordAPI(payload) {
+    return await new Promise(async (onResolve, onReject) => {
+        await axios.post(
+            `${baseUrl}resetPassword/`,
+            payload,
+            {
+                headers: {
+                    'Content-Type': "application/json",
+                    'Accept': "application/json",
+                    // 'Authorization': `Token ${token}`
+                }
+            }
+        )
+            .then(res => onResolve(res))
+            .catch(err => onReject(err));
+    });
+}
+
 export async function getNearByShopsAPI(page) {
     return await new Promise(async (onResolve, onReject) => {
         let auth_token = null;

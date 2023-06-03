@@ -74,7 +74,7 @@ const TabStack = ({hadZipCode}) => {
               style={styles.input}
               onChangeText={txt=>setZipcode(txt)}
               value={zipcode}
-              placeholder="Enter zipcode/pincode."
+              placeholder="Enter Pincode."
               keyboardType="number-pad"
               autoComplete='postal-code'
               cursorColor='#555'

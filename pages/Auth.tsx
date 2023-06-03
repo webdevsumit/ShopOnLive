@@ -8,11 +8,12 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {checkAuthenticationAPI, loginToUserAccountAPI, signupByUserAPI} from '../actions/apis';
+import {checkAuthenticationAPI, loginToUserAccountAPI, resetPresetPasswordAPI, asswordAPI, signupByUserAPI, resetPasswordAPI} from '../actions/apis';
 import Landing from '../components/Landing';
 import AppTitle from '../components/AppTitle';
 import NormalAuth from '../components/NormalAuth';
 import SignupAuth from '../components/SignupAuth';
+import ForgotPassword from '../components/ForgotPassword';
 
 const Auth = ({setIsLogedIn, setHadZipCode}) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +21,7 @@ const Auth = ({setIsLogedIn, setHadZipCode}) => {
   const [extraMessage, setExtraMessage] = useState('');
   const [isLoginingIn, setIsLogingIn] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [showForgotPass, setShowForgotPass] = useState(false);
   const [loginAuthData, setLoginAuthData] = useState({
     username: "",
     password: "",
@@ -28,6 +30,11 @@ const Auth = ({setIsLogedIn, setHadZipCode}) => {
     username: "",
     email: "",
     phone: "",
+    password: "",
+  })
+  const [forgotPassData, setForgotPassData] = useState({
+    username: "",
+    otp: "",
     password: "",
   })
 
@@ -73,8 +80,20 @@ const Auth = ({setIsLogedIn, setHadZipCode}) => {
 
 
   const onSignup = async () => {
-    if(!signupData.username || !signupData.email || !signupData.phone || !signupData.password){
-      showToaster("All fields are required.");
+    if(!signupData.username){
+      showToaster("Username is required.");
+      return;
+    }
+    if(!signupData.email){
+      showToaster("Email is required.");
+      return;
+    }
+    if(!signupData.phone){
+      showToaster("Phone Number is required.");
+      return;
+    }
+    if(!signupData.password){
+      showToaster("Password is required.");
       return;
     }
     setIsLoading(true);
@@ -100,8 +119,12 @@ const Auth = ({setIsLogedIn, setHadZipCode}) => {
   }
 
   const onLogin = async () => {
-    if(!loginAuthData.username || !loginAuthData.password){
-      showToaster("All fields are required.");
+    if(!loginAuthData.username){
+      showToaster("Username is required.");
+      return;
+    }
+    if(!loginAuthData.password){
+      showToaster("Password is required.");
       return;
     }
     setIsLoading(true);
@@ -126,6 +149,30 @@ const Auth = ({setIsLogedIn, setHadZipCode}) => {
     setIsLoading(false);
   }
 
+
+  const onClickResetPass = async () => {
+    if(!forgotPassData.username){
+      showToaster("Username is required.");
+      return;
+    }
+    if(!forgotPassData.otp){
+      showToaster("OTP is required.");
+      return;
+    }
+    if(!forgotPassData.password){
+      showToaster("Password is required.");
+      return;
+    }
+    setIsLoading(true);
+    await resetPasswordAPI(forgotPassData).then(async res=>{
+      if(res.data.status === 'success'){
+        showToaster("Successfully Reset Password. Please LOGIN.")
+        setShowForgotPass(false);
+      } else showToaster(res.data.message);
+    }).catch(err=>showToaster(err.message));
+    setIsLoading(false);
+  }
+
   return (
     <View style={styles.main}>
       {initialLoading && (
@@ -135,7 +182,12 @@ const Auth = ({setIsLogedIn, setHadZipCode}) => {
       )}
       {isLoginingIn && (
         <View style={{...styles.loading}}>
-          <NormalAuth data={loginAuthData} setData={setLoginAuthData} onBack={()=>setIsLogingIn(false)} onClickLogin={onLogin} />
+          <NormalAuth data={loginAuthData} setData={setLoginAuthData} onClickForgotPass={()=>{setIsLogingIn(false); setShowForgotPass(true)}} onBack={()=>setIsLogingIn(false)} onClickLogin={onLogin} />
+        </View>
+      )}
+      {showForgotPass && (
+        <View style={{...styles.loading}}>
+          <ForgotPassword data={forgotPassData} setData={setForgotPassData} onBack={()=>setShowForgotPass(false)} onClickResetPass={onClickResetPass} setIsLoading={setIsLoading} />
         </View>
       )}
       {isSigningIn && (
