@@ -309,7 +309,7 @@ const MeetCard = ({
             </Text>
           </View>
         </View>
-        <View style={{...styles.inline, marginVertical: 3}}>
+        <View style={{...styles.inline, marginVertical: 3, overflow: 'hidden'}}>
           <Text
             style={[styles.text, {fontWeight: 'bold', marginHorizontal: 5}]}>
             STATUS:
@@ -320,6 +320,17 @@ const MeetCard = ({
               {fontWeight: 'bold', color: meetingStatusColor},
             ]}>
             {meet.status}
+          </Text>
+          <Text
+            style={[styles.text, {fontWeight: 'bold', marginHorizontal: 5}]}>
+            | By:
+          </Text>
+          <Text
+            style={[
+              styles.text,
+              {fontWeight: 'bold', color: "#555"},
+            ]}>
+            {meet.user_name}
           </Text>
         </View>
         <View
