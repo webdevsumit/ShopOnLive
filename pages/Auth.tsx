@@ -9,11 +9,11 @@ import {
 import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {checkAuthenticationAPI, loginToUserAccountAPI, resetPresetPasswordAPI, asswordAPI, signupByUserAPI, resetPasswordAPI} from '../actions/apis';
-import Landing from '../components/Landing';
 import AppTitle from '../components/AppTitle';
 import NormalAuth from '../components/NormalAuth';
 import SignupAuth from '../components/SignupAuth';
 import ForgotPassword from '../components/ForgotPassword';
+import LandingNew from '../components/LandingNew';
 
 const Auth = ({setIsLogedIn, setHadZipCode}) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -200,7 +200,7 @@ const Auth = ({setIsLogedIn, setHadZipCode}) => {
           <ActivityIndicator size="large" />
         </View>
       )}
-      <Landing
+      <LandingNew
         setIsLoading={setIsLoading}
         extraMessage={extraMessage}
         setIsLogingIn={setIsLogingIn}
