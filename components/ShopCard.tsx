@@ -18,7 +18,7 @@ const ShopCard = ({shop, onPress}: Props) => {
                     </View>
                 <Text style={[styles.text, styles.textHead]}>{shop.store_name}</Text>
                 <Text style={[styles.text, styles.textDesc]}>{shop.store_description.length > 170 ? `${shop.store_description.substring(0, 170)}..... more>>>` : shop.store_description}</Text>
-                </View>
+            </View>
             </TouchableOpacity>
         )
     return (<Text>loading...</Text>)
